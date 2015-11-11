@@ -1,0 +1,241 @@
+datagrid:
+    pmanager-pdftemplates:
+        source:
+            type: orm
+            acl_resource: pmanager_template_index
+            query:
+                select:
+                    - pt.id
+                    - pt.entityName
+                    - pt.name
+                    - pt.description
+                    - pt.type
+                    - pt.isSystem
+                from:
+                    - { table: %ibnab_pmanager.pdftemplate.entity.class%, alias: pt }
+
+        columns:
+            entityName:
+                label:          ibnab.pmanager.pdftemplate.entity_name.label
+                type:           twig
+                template:       OroEntityBundle:Datagrid:Property/entity.html.twig
+                frontend_type:  html
+                context:
+                    entity_provider: @oro_entity.entity_provider
+            name:
+                label:          ibnab.pmanager.pdftemplate.name.label
+            description:
+                label:          ibnab.pmanager.pdftemplate.description.label
+            type:
+                frontend_type:  select
+                label:          ibnab.pmanager.pdftemplate.type.label
+                choices:        @oro_email.emailtemplate.datagrid_helper->getTypeChoices
+            isSystem:
+                frontend_type:  boolean
+                label:          ibnab.pmanager.pdftemplate.is_system.label
+        properties:
+            id: ~
+            update_link:
+                type: url
+                route: pmanager_template_update
+                params: [ id ]
+            clone_link:
+                type: url
+                route: pmanager_template_clone
+                params: [ id ]
+            delete_link:
+                type: url
+                route: oro_api_delete_pdftemplate
+                params: [ id ]
+            view_link:
+                type: url
+                route: pmanager_defaut_view
+                params: [ entityName ]
+
+        filters:
+            columns:
+                entityName:
+                    type:      choice
+                    data_name: pt.entityName
+                    null_value: _empty_
+                    options:
+                        field_options:
+                            multiple:       true
+                            choices:        @ibnab_pmanager.pdftemplate.datagrid_helper->getEntityNames
+                            translatable_options: false
+                name:
+                    type:      string
+                    data_name: pt.name
+                type:
+                    type:            choice
+                    data_name:       pt.type
+                    options:
+                        field_options:
+                            choices: @ibnab_pmanager.pdftemplate.datagrid_helper->getTypeChoices
+
+                isSystem:
+                    type:           boolean
+                    data_name:      pt.isSystem
+
+        sorters:
+            columns:
+                name:     { data_name: pt.name }
+                type:     { data_name: pt.type }
+                isSystem: { data_name: pt.isSystem }
+
+        actions:
+            update:
+                type:         navigate
+                label:        oro.grid.action.update
+                link:         update_link
+                icon:         edit
+                acl_resource: pmanager_template_update
+                rowAction:    true
+            clone:
+                type:         navigate
+                label:        oro.grid.action.clone
+                link:         clone_link
+                icon:         copy
+                acl_resource: pmanager_template_create
+            delete:
+                type:         delete
+                label:        oro.grid.action.delete
+                acl_resource: pmanager_template_delete
+                icon:         trash
+                link:         delete_link
+        options:
+            entity_pagination: true
+        action_configuration: @ibnab_pmanager.pdftemplate.datagrid_helper->getActionConfigurationClosure
+        views_list : @ibnab_pmanager.pdftemplate.datagrid_view_list
+        options: { entityHint: PDF template }
+    contacts-grid:
+        properties:
+            getpdf_link:
+                type:       url
+                route:      pmanager_default_create
+                params:     [ id ]
+        actions:
+            getpdf:
+                type: getpdf
+                data_identifier: c.id
+                frontend_handle: dialog
+                frontend_options:
+                    dialogOptions:
+                        title: @translator->trans(ibnab.pmanager.dialog.title)
+                        width: 500
+                        autoResize: true
+                        modal: true
+                        minHeight: 100
+                        allowMaximize: true
+                        allowMinimize: true
+                        dblclick: 'maximize'
+                        maximizedHeightDecreaseBy: 'minimize-bar'
+                entityName: %orocrm_contact.entity.class%
+                acl_resource: pmanager_defaut_create
+                label: ibnab.pmanager.grid_action.getpdf_label
+                icon: file-alt
+                link: getpdf_link
+    magento-order-grid:
+        properties:
+            getpdf_link:
+                type:       url
+                route:      pmanager_default_create
+                params:     [ id ]
+        actions:
+            getpdf:
+                type: getpdf
+                data_identifier: o.id
+                frontend_handle: dialog
+                frontend_options:
+                    dialogOptions:
+                        title: @translator->trans(ibnab.pmanager.dialog.title)
+                        width: 500
+                        autoResize: true
+                        modal: true
+                        minHeight: 100
+                        allowMaximize: true
+                        allowMinimize: true
+                        dblclick: 'maximize'
+                entityName: %orocrm_magento.entity.order.class%
+                acl_resource: pmanager_defaut_create
+                label: ibnab.pmanager.grid_action.getpdf_label
+                icon: file-alt
+                link: getpdf_link
+    sales-lead-grid:
+        properties:
+            getpdf_link:
+                type:       url
+                route:      pmanager_default_create
+                params:     [ id ]
+        actions:
+            getpdf:
+                type: getpdf
+                data_identifier: l.id
+                frontend_handle: dialog
+                frontend_options:
+                    dialogOptions:
+                        title: @translator->trans(ibnab.pmanager.dialog.title)
+                        width: 500
+                        autoResize: true
+                        modal: true
+                        minHeight: 100
+                        allowMaximize: true
+                        allowMinimize: true
+                        dblclick: 'maximize'
+                entityName: %orocrm_sales.lead.entity.class%
+                acl_resource: pmanager_defaut_create
+                label: ibnab.pmanager.grid_action.getpdf_label
+                icon: file-alt
+                link: getpdf_link
+    sales-opportunity-grid:
+        properties:
+            getpdf_link:
+                type:       url
+                route:      pmanager_default_create
+                params:     [ id ]
+        actions:
+            getpdf:
+                type: getpdf
+                data_identifier: o.id
+                frontend_handle: dialog
+                frontend_options:
+                    dialogOptions:
+                        title: @translator->trans(ibnab.pmanager.dialog.title)
+                        width: 500
+                        autoResize: true
+                        modal: true
+                        minHeight: 100
+                        allowMaximize: true
+                        allowMinimize: true
+                        dblclick: 'maximize'
+                entityName: %orocrm_sales.opportunity.class%
+                acl_resource: pmanager_defaut_create
+                label: ibnab.pmanager.grid_action.getpdf_label
+                icon: file-alt
+                link: getpdf_link
+    accounts-grid:
+        properties:
+            getpdf_link:
+                type:       url
+                route:      pmanager_default_create
+                params:     [ id ]
+        actions:
+            getpdf:
+                type: getpdf
+                data_identifier: a.id
+                frontend_handle: dialog
+                frontend_options:
+                    dialogOptions:
+                        title: @translator->trans(ibnab.pmanager.dialog.title)
+                        width: 500
+                        autoResize: true
+                        modal: true
+                        minHeight: 100
+                        allowMaximize: true
+                        allowMinimize: true
+                        dblclick: 'maximize'
+                entityName: %orocrm_account.account.entity.class%
+                acl_resource: pmanager_defaut_create
+                label: ibnab.pmanager.grid_action.getpdf_label
+                icon: file-alt
+                link: getpdf_link

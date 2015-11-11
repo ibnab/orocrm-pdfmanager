@@ -1,0 +1,45 @@
+<div class="widget-content">
+        {% if not form.vars.valid and form.vars.errors|length %}
+            <div class="alert alert-error">
+                <div class="message">
+                    {{ form_errors(form) }}
+                </div>
+            </div>
+        {% endif %}
+    <div class="form-container">
+        <form method="post"
+              data-nohash="true"
+              id="{{ form.vars.name }}"
+              action="{{ path('pmanager_default_index') }}"
+              class="form-horizontal"
+              {{ form_enctype(form) }}>
+            <fieldset class="form-horizontal">
+                    <div class="span3">
+                        {{ form_row(form.entityClass , {value : entityClass}) }}
+                    </div>
+                    <div class="span3">
+                        {{ form_row(form.entityId , {value : entityId}) }}
+                    </div>
+                    <div class="span3">
+                        {{ form_row(form.template) }}
+                    </div>
+                     <div class="span3">
+                        {{ form_row(form.process) }}
+                    </div>               
+            
+            </fieldset>
+
+            <div class="widget-actions">
+                <button class="btn" type="reset">{{ 'Cancel'|trans }}</button>
+                <button class="btn btn-primary" type="submit">{{ 'Submit'|trans }}</button>
+            </div>
+        </form>
+    {% set data = {
+        'formErrors': form_errors(form)? form_errors(form) : null
+        }
+    %}
+         {{ oro_form_js_validation(form) }}
+    </div>
+ </div>
+
+

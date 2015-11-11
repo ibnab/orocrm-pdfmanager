@@ -1,0 +1,54 @@
+.emailtemplate-translatation .tab-content .tab-pane input,
+.emailtemplate-translatation .tab-content .tab-pane textarea {
+    width: 100%;
+}
+.emailtemplate-translatation .tab-content {
+    padding-top: 20px;
+    padding-bottom: 10px;
+}
+.emailtemplate-variables .tab-content {
+    padding-top: 12px;
+    padding-bottom: 10px;
+}
+.emailtemplate-variables .breadcrumb {
+    float: none;
+    padding-left: 15px;
+    padding-bottom: 10px;
+}
+.emailtemplate-variables .breadcrumb>li,
+.emailtemplate-variables .breadcrumb>li.active {
+    text-transform: none;
+    font-size: 13px;
+}
+.emailtemplate-variables .variables .groups {
+    padding-left: 15px;
+}
+.emailtemplate-variables .variables .group-label {
+    font-weight: bold;
+}
+
+.modal-body .loading-content {
+    background: #fff url('../img/loader.gif') no-repeat center left;
+    padding-left: 30px;
+}
+
+/* FE refactoring */
+.ui-dialog pre.email-body,
+.ui-dialog iframe.email-body,
+.ui-dialog .email-form textarea {
+    height: 200px;
+}
+.ui-dialog .email-form input,
+.ui-dialog .email-form textarea,
+.ui-dialog .email-form .uneditable-input {
+    width: 97%;
+}
+.ui-dialog .email-form .form-horizontal .control-group .controls .validation-failed {
+    margin-left: 14px;
+}
+.ui-dialog .email-form input[type=radio] {
+    width: auto;
+}
+.ui-dialog .email-form .form-horizontal .control-group {
+    max-width: none;
+}

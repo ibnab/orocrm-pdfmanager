@@ -1,0 +1,36 @@
+oro_system_configuration:
+    groups:
+        pdf_manager:
+            title: ibnab.pmanager.system_configuration.groups.title
+        pdf_manager_setting:
+            title: ibnab.pmanager.system_configuration.groups.settings.title
+            icon:  'icon-file'
+        pdf_manager_view:
+            title: ibnab.pmanager.system_configuration.groups.view.title
+
+    fields:
+        ibnab_pmanger.allow:
+            ui_only: true
+            data_type: array
+            type: choice
+            priority: 70
+            options:
+                label: ibnab.pmanager.system_configuration.fields.allow.label
+                required: false
+                multiple: true
+                choices:
+                    marketing: ibnab.pmanager.system_configuration.fields.marketing
+                    activities: ibnab.pmanager.system_configuration.fields.activities
+    tree:
+        system_configuration:
+            platform:
+                children:
+                    general_setup:
+                        children:
+                            pdf_manager_setting:
+                                priority: 400
+                                children:
+                                    pdf_manager_view:
+                                        priority: 100
+                                        children:
+                                            - ibnab_pmanger.allow

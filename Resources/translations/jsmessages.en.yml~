@@ -1,0 +1,39 @@
+ibnab:
+    pmanager:
+        entity_plural_label:        PDF Manager
+        entity_label:               PDF Manager
+        entity_template_plural_label: Templates
+        variable_title: '{{ variable_label }}. Click to insert variable or drag it.'
+        reference_title: '{{ variable_label }}. Click to go to related variables.'
+        grid_action:
+            getpdf_label: Get PDF
+        dialog:
+            title : 
+                lable: Export PDF          
+        pdftemplate:    
+            variable_title: '{{ variable_label }}. Click to insert variable or drag it.'
+            reference_title: '{{ variable_label }}. Click to go to related variables.'
+            edit_entity: Edit pdf template "%name%"
+            entity_plural_label: PDF Templates
+            entity_label: PDF Template
+            entity_name:
+                label: Entity name
+            name:
+                label: Template name   
+            type:
+                label: Type 
+            is_system:
+                label: Is system 
+            owner:
+                label: Owner
+            variables:
+                system: System variables
+                entity: Entity variables
+            action:
+                preview: Preview
+            exportpdf:
+                download_type: Download PDF
+                attach_type: Send Email as Attached
+                choose_template: Choose Template
+                pdf_done : PDF were exported
+

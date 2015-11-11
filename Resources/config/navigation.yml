@@ -1,0 +1,24 @@
+oro_menu_config:
+    items:
+        pmanager_tab:
+            label: 'ibnab.pmanager.entity_label'  
+            uri:   '#'
+            extras:
+                position: 50
+        pmanager_tab_template:
+            label: 'ibnab.pmanager.entity_template_plural_label'
+            route: pmanager_template_index
+            extras:
+                routes: ['/^ibnab_pmanager_*/']
+                description: 'ibnab.pmanager.menu.template_list.description'
+    tree:
+        application_menu:
+            children:
+                system_tab:
+                    children:
+                        pmanager_tab:
+                            children:
+                                pmanager_tab_template: ~
+
+oro_titles:
+    ibnab_pmanager_template_index:    ~

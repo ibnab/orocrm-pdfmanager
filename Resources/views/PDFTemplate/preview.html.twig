@@ -1,0 +1,5 @@
+{% if contentType == 'html' %}
+    {{ content|raw }}
+{% else %}
+    {{ content|nl2br }}
+{% endif %}

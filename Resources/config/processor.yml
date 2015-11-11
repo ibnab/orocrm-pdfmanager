@@ -1,0 +1,7 @@
+parameters:
+    ibnab_pmanager.processor.registry.class: Ibnab\Bundle\PmanagerBundle\Processor\ProcessorRegistry
+
+services:
+    # Processor registry
+    ibnab_pmanager.processor.registry:
+        class: %ibnab_pmanager.processor.registry.class%

@@ -1,0 +1,88 @@
+<div class="widget-content">
+    <div class="form-container">
+    {% if saved %}
+       {% if process == 'attach' %} 
+       <script type="text/javascript">
+
+           require([
+            'orotranslation/js/translator',
+            'oroui/js/widget-manager',
+            'oroui/js/messenger',
+            'oroui/js/mediator',
+            'jquery.dialog.extended',
+            'oro/dialog-widget'           
+        ],
+        function(__, widgetManager, messenger, mediator , EmailAttachmentView ) {
+        widgetManager.getWidgetInstance({{ app.request.get('_wid')|json_encode|raw }},        function(widget) {	
+     widget.setTitle(__('oro.email.send_email'));
+     widget.widget.dialog('option', 'width' ,1000);
+     widget.widget.dialog('option', 'width' ,1000);
+     
+     widget.widget.dialog('option', 'allowMaximize' ,true);
+     widget.widget.dialog('option', 'allowMinimize' ,true);
+     widget.widget.dialog('option', 'maximizedHeightDecreaseBy', 'minimize-bar');
+     var urlLoad = "{{ path('ibnab_pmanger_email_createpdf', {'attachmentId':attachment_id,'entityClass':entityClass,'entityId':entityId})}}";
+     urlLoad = urlLoad.replace('amp;', '');
+     widget.loadContent(null,'get',urlLoad);
+
+
+      });
+     });
+    </script>
+       {% else %}
+        <script type="text/javascript">
+        require([
+            'orotranslation/js/translator',
+            'oroui/js/widget-manager',
+            'oroui/js/messenger',
+            'oroui/js/mediator'
+        ],
+        function(__, widgetManager, messenger, mediator) {
+            widgetManager.getWidgetInstance({{ app.request.get('_wid')|json_encode|raw }}, function(widget) {
+                messenger.notificationMessage('success', __('ibnab.pmanager.pdftemplate.exportpdf.pdf_done') + ' <a class="no-hash" target="_blank" href="{{ url }}">' + __('Download result file') + '</a>');
+                mediator.trigger('widget_success:' + widget.getAlias());
+                mediator.trigger('widget_success:' + widget.getWid());
+                widget.remove();
+            });
+        });
+        </script>
+       {% endif %}
+    {% else %}
+        {% if not form.vars.valid and form.vars.errors|length %}
+            <div class="alert alert-error">
+                <div class="message">
+                    {{ form_errors(form) }}
+                </div>
+            </div>
+        {% endif %}
+        <form method="post"
+              data-nohash="true"
+              id="{{ form.vars.name }}"
+              action="{{ path('pmanager_default_index') }}"
+              class="form-horizontal"
+              {{ form_enctype(form) }}>
+            <fieldset class="form-horizontal">
+                    <div class="span3">
+                        {{ form_row(form.entityClass , {value : entityClass}) }}
+                    </div>
+                    <div class="span3">
+                        {{ form_row(form.entityId , {value : entityId}) }}
+                    </div>
+                    <div class="span3">
+                        {{ form_row(form.template) }}
+                    </div>
+                     <div class="span3">
+                        {{ form_row(form.process) }}
+                    </div>               
+            
+            </fieldset>
+
+            <div class="widget-actions">
+                <button class="btn" type="reset">{{ 'Cancel'|trans }}</button>
+                <button class="btn btn-primary" type="submit">{{ 'Submit'|trans }}</button>
+            </div>
+        </form>
+       {{ oro_form_js_validation(form) }}
+   {% endif %}
+    </div>
+ </div>

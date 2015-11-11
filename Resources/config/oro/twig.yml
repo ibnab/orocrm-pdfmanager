@@ -1,0 +1,2 @@
+bundles:
+    - IbnabPmanagerBundle:Form:fields.html.twig

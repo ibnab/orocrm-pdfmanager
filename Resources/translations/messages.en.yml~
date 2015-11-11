@@ -1,0 +1,81 @@
+ibnab:
+    pmanager:
+        system_configuration:
+            groups:
+                settings:
+                    title: PDF Manager Setting
+                view:
+                    title: Vien Setting
+            fields:
+                allow:
+                    label: Allow(Show/Hide)
+                marketing: Allow in Marketing
+                activities: Allow in Activities
+        entity_plural_label:        PDF Manager
+        entity_label:               PDF Manager
+        entity_template_plural_label: Templates
+        variable_title: '{{ variable_label }}. Click to insert variable or drag it.'
+        reference_title: '{{ variable_label }}. Click to go to related variables.'
+        grid_action:
+            getpdf_label: Get PDF
+        dialog:
+            title : Export PDF          
+        pdftemplate:    
+            variable_title: '{{ variable_label }}. Click to insert variable or drag it.'
+            reference_title: '{{ variable_label }}. Click to go to related variables.'
+            edit_entity: Edit pdf template "%name%"
+            entity_plural_label: PDF Templates
+            saved:
+                message: PDF Template Saved
+            entity_label: PDF Template
+            entity_name:
+                label: Entity name
+            name:
+                label: Template name   
+            type:
+                label: Type 
+            is_system:
+                label: Is system 
+            owner:
+                label: Owner
+            variables:
+                system: System variables
+                entity: Entity variables
+            action:
+                preview: Preview
+            exportpdf:
+                download_type: Download PDF
+                attach_type: Send Email as Attached
+                choose_template: Choose Template
+                pdf_done : PDF were exported
+            description:
+                label: description
+            css:
+                label: custom style css
+            auteur:
+                label: Auteur
+            unit:
+                label: Unit
+                point_label: point
+                millimeter_label: millimeter
+                centimeter_label: centimeter
+                inch_label: inch
+            format:
+                label: format
+            orientation:
+                label: orientation
+                portrait_label: portrait
+                landscape_label: landscape
+            margintop:
+                label: margin top 
+            marginbottom:
+                label: margin bottom
+            marginleft:
+                label: margin left
+            marginright:
+                label: margin right
+            autobreak:
+                label: auto break
+                no_label: no
+                yes_label: yes
+

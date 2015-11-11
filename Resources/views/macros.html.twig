@@ -1,0 +1,670 @@
+{% macro renderAvailableVariablesWidget(entityName, entityChoiceFieldId) %}
+    <script type="text/template" id="oro-email-template-variables-template">
+        <div class="emailtemplate-variables oro-tabs tabbable">
+            <ul class="nav nav-tabs">
+                <li class="active" id="oro-email-template-variables-system-tab">
+                    <a href="javascript:void(0);" data-target="#oro-email-template-variables-system" data-toggle="tab">
+                        {{ 'oro.email.emailtemplate.variables.system' | trans }}
+                    </a>
+                </li>
+                <li id="oro-email-template-variables-entity-tab">
+                    <a href="javascript:void(0);" data-target="#oro-email-template-variables-entity" data-toggle="tab">
+                        {{ 'oro.email.emailtemplate.variables.entity' | trans }}
+                    </a>
+                </li>
+
+            </ul>
+            <div class="tab-content">
+                <div class="variables tab-pane active" id="oro-email-template-variables-system">
+                    <%= variables.system %>
+                </div>
+                <div class="variables tab-pane" id="oro-email-template-variables-entity">
+                </div>
+            </div>
+        </div>
+    </script>
+    <script type="text/template" id="oro-email-template-variables-system-template">
+        <ul class="nav">
+            <% _.each(variables, function(variable, varName) { %>
+            <li>
+                <a href="javascript:void(0);"
+                   class="variable"
+                   title="<%= _.__('oro.email.emailtemplate.variable_title', {'variable_label': variable.label}) %>">{% verbatim %}{{ <%= root %>.<%= varName %><% if(variable.filter){%>|<%= variable.filter %><% } %> }}{% endverbatim %}</a>
+                <span>&ndash; <%= variable.label %></span>
+            </li>
+            <% }); %>
+        </ul>
+    </script>
+    <script type="text/template" id="oro-email-template-variables-entity-variable-template">
+        <li>
+            <a href="javascript:void(0);"
+               class="variable"
+               title="<%= _.__('oro.email.emailtemplate.variable_title', {'variable_label': variable.label}) %>"
+            >{% verbatim %}{{ <%= varValue %> }}{% endverbatim %}</a>
+            <span>&ndash;</span>
+            <ul class="caption">
+                <% for (var i = 1; i < breadcrumbs.length; i++) { %>
+                <li>
+                    <span><%= pathLabels[breadcrumbs[i]] %></span>
+                    <span>/</span>
+                </li>
+                <% } %>
+                <li><%= variable.label %></li>
+            </ul>
+        </li>
+    </script>
+    <script type="text/template" id="oro-email-template-variables-entity-template">
+        <% var breadcrumbs = path.split('/'); breadcrumbs[0] = root; %>
+        <ul class="breadcrumb">
+            <% var breadcrumbPath = ''; %>
+            <% for (var i = 0; i < breadcrumbs.length; i++) { %>
+            <% breadcrumbPath += '/' + breadcrumbs[i]; %>
+            <% breadcrumbItemLabel = (i === 0 ? entityLabel : pathLabels[breadcrumbs[i]]); %>
+            <li<% if (i === breadcrumbs.length - 1) { %> class="active"<% } %>>
+                <% if (i !== breadcrumbs.length - 1) { %>
+                <a href="javascript:void(0);"
+                   class="reference"
+                   data-path="<%= breadcrumbPath.substring(root.length + 1) %>"><%= breadcrumbItemLabel %></a>
+                <span class="divider">/&nbsp;</span>
+                <% } else { %>
+                    <%= breadcrumbItemLabel %>
+                <% } %>
+            </li>
+            <% } %>
+        </ul>
+        <% var varPrefix = path.split('/'); varPrefix[0] = root; varPrefix = varPrefix.join('.'); %>
+        <% if (!_.isEmpty(fields) || !_.isEmpty(relations)) { %>
+        <ul class="nav groups">
+            <% if (!_.isEmpty(fields)) { %>
+            <li>
+                <div class="group-label"><%= _.__('oro.entity.field_choice.fields') %></div>
+                <ul class="nav">
+                <% var variableTemplate =  _.template($('#oro-email-template-variables-entity-variable-template').html()) %>
+                <% _.each(fields, function(variable, varName) { %>
+                    <%= variableTemplate({
+                        varValue:    varPrefix + '.' + varName,
+                        breadcrumbs: breadcrumbs,
+                        pathLabels:  pathLabels,
+                        variable:    variable
+                    }) %>
+                    {# shows variable with default formatter applied
+                     # code commented because it was rejected on demo but can be used in future implementation of variable formatters UI
+                     #
+                    <% if (!_.isUndefined(variable.default_formatter)) { %>
+                        <%= variableTemplate({
+                            varValue:    varPrefix + '.' + varName + '|oro_format(\'' + variable.default_formatter + '\')',
+                            breadcrumbs: breadcrumbs,
+                            pathLabels:  pathLabels,
+                            variable:    variable
+                        }) %>
+                    <% }; %>
+                    #}
+
+                    {# shows variable with all posible formatters applied (skiping default formatter)
+                     # code commented because it was rejected on demo but can be used in future implementation of variable formatters UI
+                     #
+                    <% if (!_.isUndefined(variable.formatters)) { %>
+                        <% _.each(variable.formatters, function(formatterName) { %>
+                            <% if (!_.isUndefined(variable.default_formatter) && formatterName === variable.default_formatter) { %>
+                                <% return; %>
+                            <% }; %>
+                            <%= variableTemplate({
+                                varValue:    varPrefix + '.' + varName + '|oro_format(\'' + formatterName + '\')',
+                                breadcrumbs: breadcrumbs,
+                                pathLabels:  pathLabels,
+                                variable:    variable
+                            }) %>
+                        <% }); %>
+                    <% }; %>
+                    #}
+                <% }); %>
+                </ul>
+            </li>
+            <% } %>
+            <% if (!_.isEmpty(relations)) { %>
+            <li>
+                <div class="group-label"><%= _.__('oro.entity.field_choice.relations') %></div>
+                <ul class="nav">
+                    <% _.each(relations, function(variable, varName) { %>
+                    <li>
+                        <a href="javascript:void(0);"
+                           class="reference"
+                           data-path="<%= path + '/' + varName %>"
+                           title="<%= _.__('oro.email.emailtemplate.reference_title', {'variable_label': variable.label}) %>">{% verbatim %}{{ <%= varPrefix %>.<%= varName %> }}{% endverbatim %}</a>
+                        <span>&ndash; <%= variable.label %></span>
+                    </li>
+                    <% }); %>
+                </ul>
+            </li>
+            <% } %>
+        </ul>
+        <% } %>
+    </script>
+
+    {% set options = {
+        name: 'email-template-variables',
+        entityChoice: '#' ~ entityChoiceFieldId,
+        view: {
+            templateSelector:        '#oro-email-template-variables-template',
+            sectionTemplateSelector: '#oro-email-template-variables-{sectionName}-template',
+            sectionContentSelector:  '#oro-email-template-variables-{sectionName}',
+            sectionTabSelector:      '#oro-email-template-variables-{sectionName}-tab',
+        },
+        model: {
+            attributes: render(path('oro_api_get_emailtemplate_variables')),
+            entityName: entityName,
+            entityLabel: oro_entity_config_value(entityName, 'label')|trans,
+        }
+    } %}
+    <div data-page-component-module="oroemail/js/app/components/email-variable-component"
+         data-page-component-options="{{ options|json_encode }}"></div>
+{% endmacro %}
+
+{% macro renderPreviewDialog(formId, title) %}
+    <script type="text/javascript">
+        require(['jquery', 'underscore', 'orotranslation/js/translator', 'oroui/js/modal'],
+        function($, _, __, Modal){
+            $(function () {
+                var showEmailPreviewDialog = function(el) {
+                    var iframeId = 'preview-frame';
+                    var iframe = $('<iframe />', {
+                        name: iframeId,
+                        id: iframeId,
+                        'class': "scrollable-container",
+                        frameborder: 0,
+                        marginwidth: 0,
+                        marginheight: 0,
+                        allowfullscreen: true,
+                        width: '100%',
+                        height: '98%'
+                    });
+
+                    var form = $('#{{ formId }}');
+                    var formAction = form.attr('action');
+
+                    form.one('submit', function(e) {
+                        if (!e.result) {
+                            return;
+                        }
+
+                        var loader;
+                        var confirmModal = new Modal({
+                            title: __('Preview'),
+                            content: '<div class="loading-content">' + __('Loading...') + '</div>',
+                            okText: __('OK'),
+                            className: 'modal oro-modal-normal',
+                            template: _.template('<% if (title) { %>' +
+                                '<div class="modal-header">' +
+                                    '<% if (allowCancel) { %>' +
+                                    '<a class="close">×</a>' +
+                                    '<% } %>' +
+                                    '<h3><%- title %></h3>' +
+                                '</div>' +
+                                '<% } %>' +
+                                '<div class="modal-body"><%= content %></div>'
+                            )
+                        });
+                        confirmModal.open();
+                        confirmModal.$content.append(iframe);
+                        loader = confirmModal.$content.find('.loading-content');
+
+                        loader.show();
+                        form.attr('target', iframeId);
+                        form.attr('action', $(el).attr('href'));
+
+                        iframe.one('load', function() {
+                            loader.hide();
+                            form.removeAttr('target');
+                            form.attr('action', formAction);
+                        });
+
+                        // prevent navigation form processing
+                        e.stopImmediatePropagation();
+                    });
+
+                    form.submit();
+                };
+
+                $('.dialog-form-renderer').click(function (e) {
+                    showEmailPreviewDialog(this);
+                    e.preventDefault();
+                });
+            });
+        });
+    </script>
+{% endmacro %}
+
+{#
+    Renders email address owner name as text
+    Parameters:
+        emailAddress - email address entity Oro\Bundle\EmailBundle\Entity\EmailAddress
+#}
+{% macro email_address_text(emailAddress) -%}
+    {{ emailAddress.owner|oro_format_name|default('N/A')|escape }}
+{%- endmacro -%}
+
+{#
+    Remders email address owner name as link based on owner type
+    Parameters:
+        emailAddress - email address entity Oro\Bundle\EmailBundle\Entity\EmailAddress
+#}
+{% macro email_address_link(emailAddress, label) -%}
+    {% set label = label|default(_self.email_address_text(emailAddress)) %}
+    {% set route = oro_entity_route(emailAddress.owner.class) %}
+    {% if route is not null %}
+        <a href="{{ path(route, {id: emailAddress.owner.id}) }}">
+            {{ label }}</a>
+    {% else %}
+        {{ label }}
+    {% endif %}
+{%- endmacro -%}
+
+{#
+    Remders email address name as link based on owner type
+    Parameters:
+        emailAddress - email address entity Oro\Bundle\EmailBundle\Entity\EmailAddress
+#}
+{% macro email_address_recipient_link(emailAddress, emailAddressName, label) -%}
+    {% set label = label|default(emailAddressName|default('N/A')) %}
+    {% set route = oro_entity_route(emailAddress.owner.class) %}
+    {% if route is not null %}
+        <a href="{{ path(route, {id: emailAddress.owner.id}) }}">
+            {{ label }}</a>
+    {% else %}
+        {{ label }}
+    {% endif %}
+{%- endmacro -%}
+
+{#
+    Render email address name, owner name or a link to owner view page can be rendered depends on given parameters
+    Parameters:
+        emailAddress - email address entity Oro\Bundle\EmailBundle\Entity\EmailAddress
+        emailAddressName - a string contains an email address. It is used if the email address has no owner
+        noLink - determines whether the rendering of a link to the owner view page is forbidden or not. Default value is false
+        knownOnly - if true renders only emails which have an owner; otherwise, all emails. Default value is false
+#}
+{% macro email_address(emailAddress, emailAddressName, noLink, knownOnly) -%}
+    {% if emailAddress.owner is null -%}
+        {% if not knownOnly|default(false) -%}
+            {{ emailAddressName }}
+        {%- endif %}
+    {%- else -%}
+        {% if noLink|default(false) -%}
+            {{ _self.email_address_text(emailAddress) }}
+        {%- else -%}
+            {{ _self.email_address_link(emailAddress)|raw }}
+        {%- endif %}
+    {%- endif %}
+{%- endmacro %}
+
+{#
+    Render email address name a link to owner view page can be rendered depends on given parameters
+    Parameters:
+        emailAddress - email address entity Oro\Bundle\EmailBundle\Entity\EmailAddress
+        emailAddressName - a string contains an email address. It is used if the email address has no owner
+        noLink - determines whether the rendering of a link to the owner view page is forbidden or not. Default value is false
+        knownOnly - if true renders only emails which have an owner; otherwise, all emails. Default value is false
+#}
+{% macro email_address_recipient(emailAddress, emailAddressName, noLink, knownOnly) -%}
+    {% if emailAddress.owner is null -%}
+        {% if not knownOnly|default(false) -%}
+            {{ emailAddressName }}
+        {%- endif %}
+    {%- else -%}
+        {% if noLink|default(false) -%}
+            {{ emailAddressName }}
+        {%- else -%}
+            {{ _self.email_address_recipient_link(emailAddress, emailAddressName)|raw }}
+        {%- endif %}
+    {%- endif %}
+{%- endmacro %}
+
+{#
+    Render email address with title
+    Parameters:
+        email - EmailInterface object or string
+        title (optional) - email title
+#}
+{%- macro email_address_simple(email, title) -%}
+    {% if email is not empty %}
+        {% set emailAddress = null %}
+        {# if email is an object implemented EmailInterface #}
+        {% if email.email is defined %}
+            {% if email.email is not empty %}
+                {% set emailAddress = email.email %}
+            {% endif %}
+            {# if email is a string #}
+        {% else %}
+            {% set emailAddress = email %}
+        {% endif %}
+
+        {% if title is empty %}
+            {% set title = emailAddress %}
+        {% endif %}
+
+        {% if emailAddress %}
+            <a href="mailto:{{ emailAddress|e('html_attr') }}" title="{{ title|e('html_attr') }}">{{ title }}</a>
+        {% endif %}
+    {% endif %}
+{%- endmacro -%}
+
+{#
+    Render the given email recipients
+    Parameters:
+        recipients - an array of Oro\Bundle\EmailBundle\Entity\EmailRecipients
+        noLink - determines whether the rendering of a link to the owner view page is forbidden or not. Default value is false
+        knownOnly - if true renders only emails which have an owner; otherwise, all emails. Default value is false
+#}
+{% macro recipient_email_addresses(recipients, noLink, knownOnly) -%}
+    {% set addresses = {} -%}
+    {% for recipient in recipients -%}
+        {% set address = _self.email_address_recipient(recipient.emailAddress, recipient.name, noLink, knownOnly) %}
+        {%- if address|length > 0 -%}
+            {% set addresses = addresses|merge([address]) %}
+        {% else %}
+            {% set addresses = addresses|merge([recipient.emailAddress.email]) %}
+        {%- endif %}
+    {%- endfor -%}
+
+    {% for address in addresses -%}
+        {{ address }}
+        {%- if not loop.last %}; {% endif %}
+    {% else %}
+        {{ 'N/A'|trans }}
+    {%- endfor %}
+{%- endmacro %}
+
+{#
+    Render the given email attachments
+    Parameters:
+        attachments - an array
+        target - an object
+        hasGrantReattach - has grants for create attachment entity
+#}
+{% macro attachments(attachments, target, hasGrantReattach) -%}
+    {%- for attachment in attachments -%}
+        {% if attachment.embeddedContentId is null %}
+            {% set canCopyToRecord = (hasGrantReattach and target is defined and oro_can_attache(attachment, target)) ? true : false %}
+            <li class="email-attachments-list-item">
+            <div class="dropdown link-to-record">
+                <a class="no-hash dropdown-toggle" href="javascript: void(0);" data-toggle="dropdown">
+                    <i class="icon icon-file-alt"></i> {{ attachment.fileName|oro_format_filename }}
+                </a>
+                <ul class="dropdown-menu {{ canCopyToRecord ? '' : 'one'}}" role="menu" aria-labelledby="dropdownMenu">
+                    <a class="no-hash" tabindex="-1" href="{{ path('oro_email_attachment', {id: attachment.id}) }}">
+                        {{ 'oro.email.attachment.save'|trans }}
+                    </a>
+                    {% if (canCopyToRecord) %}
+                        {% set options = {
+                            'view': 'oroemail/js/app/views/email-attachment-link-view',
+                            'url': path('oro_email_attachment_link', {
+                                id: attachment.id,
+                                targetActivityClass: oro_class_name(target),
+                                targetActivityId: target.id
+                            })
+                        } %}
+                    <a tabindex="-1" data-page-component-module="oroui/js/app/components/view-component"
+                        class="attachment"
+                        data-page-component-options="{{ options|json_encode }}"
+                        href="{{ options.url }}">
+                        {{ 'oro.email.attachment.copy_to_record'|trans }}
+                    </a>
+                    {% endif %}
+                </ul>
+            </div>
+        </li>
+        {% endif %}
+    {%- endfor -%}
+{%- endmacro %}
+
+{#
+    Render email body
+    Parameters:
+        emailBody - email body entity Oro\Bundle\EmailBundle\Entity\EmailBody
+        cssClass - used to specify an additional CSS class for email body container HTML element
+#}
+{% macro body(emailBody, cssClass) -%}
+    {% if emailBody.bodyIsText -%}
+        <pre class="email-body{% if cssClass is defined %} {{ cssClass }}{% endif %}">{{ emailBody.bodyContent }}</pre>
+    {%- else -%}
+        <iframe sandbox="" class="email-body{% if cssClass is defined %} {{ cssClass }}{% endif %}" src="{{ path('oro_email_body', {id:emailBody.id}) }}"></iframe>
+    {%- endif %}
+{%- endmacro %}
+
+{#
+    Render email participant name or "me" if it is current user,
+        owner name or a link to owner view page can be rendered depends on given parameters
+    Parameters:
+        emailAddress - email address entity Oro\Bundle\EmailBundle\Entity\EmailAddress
+        emailAddressName - a string contains an email address. It is used if the email address has no owner
+        noLink - determines whether the rendering of a link to the owner view page is forbidden or not. Default value is false
+        knownOnly - if true renders only emails which have an owner; otherwise, all emails. Default value is false
+#}
+{% macro email_participant_name_or_me(emailAddress, emailAddressName, noLink, knownOnly) -%}
+    {% if emailAddress.owner is not null and emailAddress.owner.id == app.user.id -%}
+        {% if noLink|default(false) -%}
+            {{ 'Me'|trans|lower }}
+        {%- else -%}
+            {{ _self.email_address_link(emailAddress, 'Me'|trans|lower)|raw }}
+        {%- endif %}
+    {%- else -%}
+        {%- set name = oro_get_email_address_name(emailAddressName)|default(oro_get_email_address(emailAddressName)) -%}
+        {{ _self.email_address(emailAddress, name, noLink, knownOnly) }}
+    {%- endif %}
+{%- endmacro %}
+
+{#
+    Render list of participants using email_participant_name_or_me macros
+    Parameters:
+        recipients - an array of Oro\Bundle\EmailBundle\Entity\EmailRecipients
+        noLink - determines whether the rendering of a link to the owner view page is forbidden or not. Default value is false
+        knownOnly - if true renders only emails which have an owner; otherwise, all emails. Default value is false
+#}
+{% macro email_participants_name(recipients, noLink, knownOnly) -%}
+    {% set recipientHtmlCollection = [] %}
+    {% for recipient in recipients %}
+        {% set recipientHtml -%}
+            <span class="email-recipient">{{ _self.email_participant_name_or_me(recipient.emailAddress, recipient.name, noLink, knownOnly) }}</span>
+        {%- endset %}
+        {% set recipientHtmlCollection = recipientHtmlCollection|merge([recipientHtml]) %}
+    {% endfor %}
+    {{ recipientHtmlCollection|join(', ')|raw }}
+{%- endmacro %}
+
+{#
+    Render date in proper format
+    Parameters:
+        date - DateTime
+#}
+{% macro date_smart_format(date) -%}
+    {% if date(date)|oro_format_date == date()|oro_format_date -%}
+        {# same day -- show only time #}
+        {{ date|oro_format_time }}
+    {%- elseif date(date)|oro_format_date == date('-1days')|oro_format_date -%}
+        {{ 'yesterday'|trans|capitalize }}
+    {%- elseif date(date).format('Y') == date().format('Y') -%}
+        {# same year -- month and daty #}
+        {{ date|oro_format_day }}
+    {%- else -%}
+        {{ date|oro_format_date }}
+    {%- endif %}
+{%- endmacro %}
+
+{#
+    Render table with detailed information about all participants, send date and subject
+    Parameters:
+        email - email entity Oro\Bundle\EmailBundle\Entity\Email
+#}
+{% macro email_detailed_info_table(email) %}
+    {% set recipientsTo = [] %}
+    {% set recipientsCc = [] %}
+    {% set recipientsBcc = [] %}
+    {% for recipient in email.recipients %}
+        {% if recipient.type == 'to' %}
+            {% set recipientsTo = recipientsTo|merge([recipient.name|e])%}
+        {% elseif recipient.type == 'cc' %}
+            {% set recipientsCc = recipientsCc|merge([recipient.name|e])%}
+        {% elseif recipient.type == 'bcc' %}
+            {% set recipientsBcc = recipientsBcc|merge([recipient.name|e])%}
+        {% endif %}
+    {% endfor %}
+    {% set fromUserName = oro_get_email_address_name(email.fromName) %}
+    {% set fromEmailAddress = '&lt;' ~ oro_get_email_address(email.fromName) ~ '&gt;' %}
+    {% set data = [{
+            label: 'From'|trans,
+            value: fromUserName ? '<b>' ~ fromUserName|e ~ '</b> ' ~ fromEmailAddress : '<b>' ~ fromEmailAddress ~ '</b>' ,
+            cssClass: 'autor'
+        }, {
+            label: 'To'|trans,
+            value: recipientsTo|join(',<br/>')
+        }, {
+            label: 'Cc'|trans,
+            value: recipientsCc|join(',<br/>')
+        }, {
+            label: 'Bcc'|trans,
+            value: recipientsBcc|join(',<br/>')
+        }, {
+            label: 'Date'|trans,
+            value: email.sentAt|oro_format_datetime|e
+        }, {
+            label: 'Subject'|trans,
+            value: email.subject|e
+    }] %}
+    <ul class="form-horizontal">
+    {% for item in data %}
+        {% if item.value is not empty %}
+        <li class="control-group">
+            <label class="control-label">{{ item.label|raw }}:</label>
+            <div class="controls {{ item.cssClass is defined ? item.cssClass : '' }}">{{ item.value|raw }}</div>
+        </li>
+        {% endif %}
+    {% endfor %}
+    </ul>
+{% endmacro %}
+
+{#
+    Strips email body from HTML-tags, removes sequence of '-' chars and cuts to fit the length
+    Parameters:
+        emailBody - email body entity Oro\Bundle\EmailBundle\Entity\EmailBody
+#}
+{% macro email_short_body(emailBody, length) %}
+    {%- set length = length|default(150) -%}
+    {{ emailBody.bodyContent|oro_html_purify|striptags|oro_preg_replace('/\-{2,}/', '--')[:length]|replace({'--': '&mdash;'})|raw }}
+{% endmacro %}
+
+{#
+    Render email contexts
+    Parameters:
+        email - email body entity Oro\Bundle\EmailBundle\Entity\Email
+#}
+{% macro email_contexts(entity, target, checkTarget) %}
+    <script type="text/template" id="email-context-activity-list">
+        <div class="context-item" style="border: none" data-cid="<%= entity.cid %>">
+                <span data-id="<%= entity.get('targetId') %>">
+                    <span class="<%= entity.get('icon') %>"></span>
+
+                    <% if (entity.get('link')) { %>
+                        <a href="<%= entity.get('link') %>">
+                            <span class="context-label"><%= entity.get('title') %></span>
+                        </a>
+                    <% } else { %>
+                        <span class="context-label"><%= entity.get('title') %></span>
+                    <% }  %>
+                    {% if  resource_granted('EDIT', entity) %}
+                        <i class="icon-remove"></i>
+                    {% endif %}
+                </span>
+        </div>
+    </script>
+
+    {% if checkTarget is empty %}
+        {% set checkTarget = false %}
+    {% endif %}
+
+    {% set contextTargetArray = [] %}
+    {% set targetClassNameEncoded = oro_class_name(target, true) %}
+    {% for item in entity.getActivityTargetEntities() %}
+        {% set itemClassName = oro_class_name(item) %}
+        {% set itemClassNameEncoded = oro_class_name(item, true) %}
+        {% set contextTarget = {
+            'entityId': entity.id,
+            'targetId': item.id,
+            "targetClassName": itemClassNameEncoded,
+            'title': item|oro_format_name,
+            'icon': oro_entity_config_value(itemClassName, 'icon' ),
+            'link': oro_entity_metadata_value(itemClassName, 'routeView') ? path(oro_entity_route(itemClassName), {id:item.id} ) : false
+        } %}
+        {% if resource_granted('VIEW', item) and not ((app.user.id == item.id) and (oro_class_name(app.user) == itemClassName)) %}
+            {% set contextTargetArray = contextTargetArray|merge([contextTarget]) %}
+        {% endif %}
+    {% endfor %}
+
+    {% set options = {
+        contextTargets: contextTargetArray,
+        entityId: entity.id,
+        target: false,
+        checkTarget: checkTarget
+    } %}
+
+    {% if checkTarget %}
+        {% set targetEntity = {
+            'target': {
+                'id' : target.id,
+                'className': targetClassNameEncoded
+            }
+        } %}
+        {% set options = options|merge(targetEntity) %}
+    {% endif %}
+
+    <div class="email-context-activity"
+         data-page-component-module="oroemail/js/app/components/email-context-activity-component"
+         data-page-component-options="{{ options|json_encode }}"
+         data-layout="separate">
+        <div class="email-context-activity-label">
+            {{ 'oro.email.contexts.label'|trans }}
+        </div>
+        <div class="email-context-activity-items">
+        </div>
+    </div>
+{% endmacro %}
+
+{#
+    Render title and buttons for Mailbox configuration
+#}
+{% macro renderMailboxConfigTitleAndButtons(pageTitle, buttons) %}
+    <div class="container-fluid configuration-header clearfix">
+        {% if pageTitle is iterable %}
+            <div class="customer-info customer-simple pull-left">
+                {% for title in pageTitle%}
+                    {% if not loop.last %}
+                        <div class="sub-title">
+                            {% if title is iterable and title.link is defined and title.label is defined %}
+                                <a href="{{ title.link }}">{{ title.label }}</a>
+                            {% else %}
+                                {{ title }}
+                            {% endif %}
+                        </div>
+                        <span class="separator">/</span>
+                    {% else %}
+                        <h1 class="user-name">
+                            {% if title is iterable and title.link is defined and title.label is defined %}
+                                <a href="{{ title.link }}">{{ title.label }}</a>
+                            {% else %}
+                                {{ title }}
+                            {% endif %}
+                        </h1>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% else %}
+            <h1>
+                {{ pageTitle }}
+            </h1>
+        {% endif %}
+
+        <div class="pull-right title-buttons-container">
+            {{ buttons|raw }}
+        </div>
+    </div>
+{% endmacro %}
+

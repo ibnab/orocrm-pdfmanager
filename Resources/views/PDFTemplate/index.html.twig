@@ -1,0 +1,13 @@
+{% extends 'OroUIBundle:actions:index.html.twig' %}
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% set gridName = 'pmanager-pdftemplates' %}
+{% set pageTitle = 'ibnab.pmanager.pdftemplate.entity_plural_label'|trans %}
+
+{% block navButtons %}
+    {% if resource_granted('pmanager_template_create') %}
+        {{ UI.addButton({
+            'path' : path('pmanager_template_create'),
+            'entity_label': 'ibnab.pmanager.pdftemplate.entity_label'|trans
+        }) }}
+    {% endif %}
+{% endblock %}

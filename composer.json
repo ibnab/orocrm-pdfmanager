@@ -1,0 +1,30 @@
+{
+    "name": "ibnab/orocrm-pdfmanager",
+    "description": "Ibnab PDF Manager",
+    "homepage": "https://github.com/ibnab/orocrm-pdfmanager.git",
+    "license": "OSL-3.0",
+    "authors": [
+        {
+            "name": "Ibnab",
+            "homepage": "http://www.ibnab.com"
+        }
+    ],
+    "autoload": {
+        "psr-0": {
+            "Ibnab\\Bundle\\PmanagerBundle": "src/"
+        }
+    },
+    "target-dir": "src/Ibnab/Bundle/managerBundle",
+    "require": {
+        "php": ">=5.4.9",
+        "oro/crm": "1.x-dev"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.x-dev"
+        }
+    }
+}
+

@@ -1,0 +1,9 @@
+parameters:
+    ibnab_pmanager.extension.action.type.getpdf.class:    Ibnab\Bundle\PmanagerBundle\Extension\Action\Actions\GetpdfAction 
+
+services:
+    ibnab_pmanager.extension.action.type.getpdf:
+        class: %ibnab_pmanager.extension.action.type.getpdf.class%
+        scope: prototype
+        tags:
+            - { name: oro_datagrid.extension.action.type, type: getpdf }

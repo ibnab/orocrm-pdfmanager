@@ -1,0 +1,3 @@
+pmanager_template_api:
+    resource: Ibnab\Bundle\PmanagerBundle\Controller\Api\Rest\PDFTemplateController
+    type: rest

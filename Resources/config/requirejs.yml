@@ -1,0 +1,5 @@
+config:
+    paths:
+        'pmanger/js/pdftemplate/variable/model': 'bundles/ibnabpmanager/js/pmanger/variable/model.js'
+        'pmanger/js/pdftemplate/variable/view': 'bundles/ibnabpmanager/js/pmanger/variable/view.js'
+        'oro/datagrid/action/getpdf-action': 'bundles/ibnabpmanager/js/datagrid/action/getpdf-action.js'
