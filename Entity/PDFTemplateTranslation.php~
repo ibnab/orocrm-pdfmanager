@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Translatable\Entity\MappedSuperclass\AbstractPersonalTranslation;
 
 /**
- * @ORM\Table(name="ibnab_pmanager_template_translation", indexes={
+ * @ORM\Table(name="ibnab_pmanager_translation", indexes={
  *      @ORM\Index(name="lookup_unique_idx", columns={"locale", "object_id", "field"})
  * })
  * @ORM\Entity(repositoryClass="Gedmo\Translatable\Entity\Repository\TranslationRepository")
