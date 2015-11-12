@@ -1,1 +1,0 @@
-{% extends "OroEmailBundle:Email:update.html.twig" %}
