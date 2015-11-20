@@ -14,10 +14,10 @@
             "Ibnab\\Bundle\\PmanagerBundle": "src/"
         }
     },
-    "target-dir": "src/Ibnab/Bundle/managerBundle",
+    "target-dir": "src/Ibnab/Bundle/PmanagerBundle",
     "require": {
         "php": ">=5.4.9",
-        "oro/crm": "1.x-dev"
+        "oro/crm": "1.x"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
