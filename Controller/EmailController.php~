@@ -1,0 +1,89 @@
+<?php
+
+namespace Ibnab\Bundle\PmanagerBundle\Controller;
+
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query;
+
+use FOS\RestBundle\Util\Codes;
+
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+
+use Oro\Bundle\EmailBundle\Model\WebSocket\WebSocketSendProcessor;
+use Oro\Bundle\EmailBundle\Cache\EmailCacheManager;
+use Oro\Bundle\EmailBundle\Entity\Manager\EmailManager;
+use Oro\Bundle\EmailBundle\Entity\Email;
+use Oro\Bundle\EmailBundle\Entity\EmailAttachment;
+use Oro\Bundle\EmailBundle\Entity\EmailBody;
+use Oro\Bundle\EmailBundle\Entity\EmailUser;
+use Oro\Bundle\EmailBundle\Form\Model\Email as EmailModel;
+use Oro\Bundle\EmailBundle\Decoder\ContentDecoder;
+use Oro\Bundle\EmailBundle\Provider\EmailRecipientsProvider;
+use Oro\Bundle\EmailBundle\Exception\LoadEmailBodyException;
+use Oro\Bundle\EntityBundle\Tools\EntityRoutingHelper;
+use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
+use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionDispatcher;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\EmailBundle\Provider\EmailRecipientsHelper;
+use Oro\Bundle\EmailBundle\Form\Model\EmailAttachment as ModelEmailAttachment;
+use Oro\Bundle\EmailBundle\Entity\EmailAttachmentContent;
+use Oro\Bundle\AttachmentBundle\Entity\Attachment;
+use Oro\Bundle\AttachmentBundle\Entity\File;
+use Oro\Bundle\EmailBundle\Controller\EmailController as BaseController;
+/**
+ * Class EmailController
+ *
+ * @package Ibnab\Bundle\PmanagerBundle\Controller
+ *
+ */
+class EmailController extends BaseController
+{
+    /**
+     * @Route("/createpdf", name="ibnab_pmanger_email_createpdf")
+     * @AclAncestor("ibnab_pmanger_email_createpdf")
+     * @Template("OroEmailBundle:Email:update.html.twig")
+     */
+    public function createPDFAction()
+    {
+        
+        $emailModel = $this->get('oro_email.email.model.builder')->createEmailModel();
+        $attachmentId = $this->get('request')->get('attachmentId');
+       $attachment = $this->getDoctrine()
+            ->getRepository('OroAttachmentBundle:Attachment')
+            ->findOneBy(array('id' => $attachmentId));
+        $emailAttachment = new EmailAttachment();
+        $modelEmailAttachment = new ModelEmailAttachment();
+        $emailAttachment->setFile($attachment->getFile());
+        $emailAttachment->setFileName($attachment->getFile()->getFileName());
+        $emailAttachmentContent = new EmailAttachmentContent();
+        $emailAttachment->setContentType($attachment->getFile()->getMimeType());
+        $emailAttachment->setContent($emailAttachmentContent);
+        $modelEmailAttachment->setType(ModelEmailAttachment::TYPE_ATTACHMENT);
+        $modelEmailAttachment->setFileSize($attachment->getFile()->getFileSize());
+        $modelEmailAttachment->setModified($attachment->getFile()->getUpdatedAt());
+        $modelEmailAttachment->setId($attachment->getId());
+        $modelEmailAttachment->setEmailAttachment($emailAttachment);
+        //$emailModel->addAttachment($modelEmailAttachment);
+        $emailModel->setAttachmentsAvailable([$modelEmailAttachment]);
+        return $this->process($emailModel);
+    }
+    /**
+     * @Route("/user-emails", name="oro_email_user_emails")
+     * @AclAncestor("oro_email_email_view")
+     * @Template
+     */
+    public function userEmailsAction()
+    {
+        return parent::userEmailsAction();
+    }
+}

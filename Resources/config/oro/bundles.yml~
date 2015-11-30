@@ -1,0 +1,2 @@
+bundles:
+    - { name: Ibnab\Bundle\PmanagerBundle\IbnabPmanagerBundle , priority: 400 }
