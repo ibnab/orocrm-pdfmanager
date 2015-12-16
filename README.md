@@ -11,4 +11,4 @@ Our Ibnab team created a new bundle for OroCRM 'PDF Manager' , create pdf with t
 For more resource and courses About OroCRM visit Our blog :
 http://www.ibnab.com/en/blog/orocrm
 or our page Resources for Developers :
-http://www.ibnab.com/en/resource
+http://www.ibnab.com/en/resource or http://store.ibnab.com
