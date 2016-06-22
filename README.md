@@ -12,3 +12,7 @@ For more resource and courses About OroCRM visit Our blog :
 http://www.ibnab.com/en/blog/orocrm
 or our page Resources for Developers :
 http://www.ibnab.com/en/resource or http://store.ibnab.com
+
+# Pro PDF Manager
+
+video about pro version : http://www.ibnab.com/en/blog/orocrm/orocrm-how-to-use-the-pro-pdf-manager
