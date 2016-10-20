@@ -59,7 +59,7 @@ class DefaultController extends Controller
             $pdfObj->lastPage();
     
             //substr($info['entityClass'], strrpos($str, '\\') + 1)
-            $fileName   = $this->getExportHandler()->fileSystemOperator
+            $fileName   = $this->getExportHandler()
             ->generateTemporaryFileName($info['entityId'], $outputFormat);
             $pdfObj->Output($fileName, 'F');
             $url     =  $this->get('router')->generate(
@@ -118,7 +118,7 @@ class DefaultController extends Controller
     }    
     protected function getExportHandler()
     {
-        return $this->get('oro_importexport.handler.export');
+        return $this->get('oro_importexport.file.file_system_operator');
     }
     protected function getAttachmentManager()
     {
